@@ -7,4 +7,12 @@ const appState = proxy({
   hoveringPos: null,
 });
 
+export const puzzleState = proxy({
+  isDragging: false,
+  initialPosition: null,
+  isHovering: false,
+  hoveringPos: null,
+  hoveredPiece: null,
+});
+
 export default appState;
