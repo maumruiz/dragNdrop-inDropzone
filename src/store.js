@@ -5,6 +5,8 @@ const appState = proxy({
   isDragging: false,
   initialPosition: null,
   hoveringPos: null,
+  hoveredKey: null,
+  dropzonesUsed: [false, false, false],
 });
 
 export const puzzleState = proxy({

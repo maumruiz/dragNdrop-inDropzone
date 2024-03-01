@@ -1,5 +1,7 @@
 import { Canvas } from "@react-three/fiber";
+import Basic from "./Basic";
 import { Puzzle } from "./Puzzle";
+import { OrbitControls } from "@react-three/drei";
 
 function App() {
   return (
@@ -14,7 +16,10 @@ function App() {
       />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
 
-      <Puzzle />
+      <Basic />
+      {/* <Puzzle /> */}
+
+      {/* <OrbitControls makeDefault /> */}
     </Canvas>
   );
 }

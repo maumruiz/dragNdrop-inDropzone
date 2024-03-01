@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { DragControls } from "./DragControls";
 import { useSnapshot } from "valtio";
 import appState from "./store";
@@ -27,8 +27,12 @@ function Box(props) {
     );
 
     // Calculate correct position
-    if (appState.isHovering) {
+    if (
+      appState.isHovering &&
+      appState.dropzonesUsed[appState.hoveredKey] === false
+    ) {
       groupRef.current.children[0].position.copy(appState.hoveringPos);
+      appState.dropzonesUsed[appState.hoveredKey] = true;
     } else {
       groupRef.current.children[0].position.copy(appState.initialPosition);
     }
@@ -51,11 +55,13 @@ function Box(props) {
   );
 }
 
-function DropZone(props) {
+function DropZone({ dzKey, ...props }) {
   const snap = useSnapshot(appState);
+  const [hovered, setHovered] = useState(false);
   const meshRef = useRef();
 
   const onDropZoneHover = () => {
+    setHovered(true);
     appState.isHovering = true;
 
     meshRef.current.geometry.computeBoundingBox();
@@ -64,11 +70,14 @@ function DropZone(props) {
     meshRef.current.localToWorld(center);
 
     appState.hoveringPos = center;
+    appState.hoveredKey = dzKey;
   };
 
   const onDropZoneUnhover = () => {
+    setHovered(false);
     appState.isHovering = false;
     appState.hoveringPos = null;
+    appState.hoveredKey = null;
   };
 
   return (
@@ -80,8 +89,8 @@ function DropZone(props) {
     >
       <boxGeometry args={[1.5, 2, 0.1]} />
       <meshBasicMaterial
-        color={snap.isHovering ? "lightgreen" : "lightblue"}
-        opacity={snap.isDragging ? 0.5 : 0.1}
+        color={hovered ? "lightgreen" : "lightblue"}
+        opacity={hovered ? 0.6 : snap.isDragging ? 0.3 : 0.1}
         transparent
       />
     </mesh>
@@ -91,9 +100,9 @@ function DropZone(props) {
 export default function Basic() {
   return (
     <>
-      <DropZone position={[-3, 0, -1]} />
-      <DropZone position={[0, 0, -1]} />
-      <DropZone position={[3, 0, -1]} />
+      <DropZone position={[-3, 0, -1]} dzKey={0} />
+      <DropZone position={[0, 0, -1]} dzKey={1} />
+      <DropZone position={[3, 0, -1]} dzKey={2} />
 
       <Box position={[-3, -2.5, 0]} color={"orange"} />
       <Box position={[0, -2.5, 0]} color={"crimson"} />
